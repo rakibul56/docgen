@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- PARENT: We inherit from Spring Boot's parent POM.
+         This gives us pre-configured dependency versions so we
+         don't have to specify versions for every library. -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.2</version>
+    </parent>
+
+    <!-- OUR PROJECT IDENTITY: Maven uses these 3 fields to
+         uniquely identify our project, like a passport. -->
+    <groupId>com.docgen</groupId>          <!-- Organization -->
+    <artifactId>docgen</artifactId>        <!-- Project name -->
+    <version>1.0.0</version>               <!-- Version -->
+    <packaging>jar</packaging>             <!-- Output format -->
+
+    <properties>
+        <java.version>17</java.version>    <!-- Compile with Java 17 -->
+    </properties>
+
+    <!-- DEPENDENCIES: Libraries our project needs.
+         Think of these like npm packages in Node.js. -->
+    <dependencies>
+
+        <!-- spring-boot-starter-web:
+             This ONE dependency gives us:
+             - Embedded Apache Tomcat server (no separate install needed)
+             - Spring MVC for building REST APIs
+             - JSON serialization (Jackson library)
+             - Input validation support
+             Cartago uses Tomcat/Wildfly — this is your Tomcat experience. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-actuator:
+             Adds production-ready features:
+             - /actuator/health — Is the app alive? (Kubernetes uses this)
+             - /actuator/metrics — CPU, memory, request counts
+             - /actuator/prometheus — Metrics in Prometheus format (we'll use this later)
+             This is how we'll connect to Prometheus + Grafana monitoring. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-test:
+             Testing tools: JUnit 5, Mockito, Spring Test utilities.
+             scope=test means this is ONLY used during testing,
+             not included in the final JAR. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- spring-boot-maven-plugin:
+                 Packages our app into a "fat JAR" — a single .jar file
+                 that contains our code + all dependencies + Tomcat.
+                 You can run it with just: java -jar docgen-1.0.0.jar
+                 No need to install Tomcat separately! -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
