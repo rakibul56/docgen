@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.4.4</version>
     </parent>
 
     <!-- OUR PROJECT IDENTITY: Maven uses these 3 fields to
@@ -22,7 +22,7 @@
     <packaging>jar</packaging>             <!-- Output format -->
 
     <properties>
-        <java.version>17</java.version>    <!-- Compile with Java 17 -->
+        <java.version>24</java.version>    <!-- Compile with Java 17 -->
     </properties>
 
     <!-- DEPENDENCIES: Libraries our project needs.
@@ -56,6 +56,31 @@
              Testing tools: JUnit 5, Mockito, Spring Test utilities.
              scope=test means this is ONLY used during testing,
              not included in the final JAR. -->
+
+        <!-- Thymeleaf: Template engine that merges HTML + data
+             Think of it like mail merge in Microsoft Word.
+             We write HTML with placeholders like ${customerName}
+             and Thymeleaf replaces them with actual values.
+             This is exactly what Cartago does for Output Management. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- OpenHTMLtoPDF: Converts HTML to PDF
+             After Thymeleaf fills in the template, this library
+             takes that HTML and renders it into a real PDF file
+             with proper fonts, tables, and layout. -->
+        <dependency>
+            <groupId>com.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-pdfbox</artifactId>
+            <version>1.0.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

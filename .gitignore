@@ -1,13 +1,71 @@
 # Maven build output
 **/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Maven wrapper
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Spring Boot
+*.jar
+*.war
+*.ear
+*.nar
+
+# Application secrets / local config overrides
+**/application-local.yml
+**/application-local.properties
+**/application-secret*.yml
+**/application-secret*.properties
+*.env
+.env.*
+!.env.example
 
 # Logs
 *.log
+logs/
+spring.log
 
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # IDE/editor
 .idea/
+*.iws
+*.iml
+*.ipr
 .vscode/
+*.swp
+*.swo
+*~
+
+# Claude Code (local personal settings only; shared settings and CLAUDE.md should be committed)
+.claude/settings.local.json
+
+# Claude Code skills lock file (internal tool state, not project source)
+skills-lock.json
+
+# Docker
+.docker/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+
+# Kubernetes secrets
+*-secret.yaml
+*-secrets.yaml
+
+# Test output
+surefire-reports/
+failsafe-reports/
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*

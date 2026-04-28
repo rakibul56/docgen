@@ -2,49 +2,45 @@ package com.docgen.controller;
 
 import java.util.Map;
 
-// ResponseEntity — lets us control HTTP status code, headers, and body
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-// These annotations map HTTP methods to Java methods
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// @RestController tells Spring:
-//   "This class handles HTTP requests and returns JSON data"
-//   Without this, Spring wouldn't know this class exists.
+import com.docgen.model.DocumentRequest;
+import com.docgen.service.PdfGeneratorService;
+
 @RestController
-// @RequestMapping sets the BASE URL for all endpoints in this class
-// Every method's URL will start with /api/v1/documents
 @RequestMapping("/api/v1/documents")
 public class DocumentController {
 
-    // ==========================================
-    // ENDPOINT 1: Health Check
-    // URL:    GET http://localhost:8080/api/v1/documents/health
-    // Purpose: Kubernetes will call this every 10 seconds to
-    //          check if our app is alive. If it fails,
-    //          Kubernetes restarts the container.
-    // ==========================================
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, String>> health() {
+    // Spring injects PdfGeneratorService here automatically
+    // because we marked it with @Service
+    private final PdfGeneratorService pdfService;
 
-        // Map.of() creates an immutable map (Java 9+ feature)
-        // This gets automatically converted to JSON by Jackson library
-        Map<String, String> response = Map.of(
-            "status", "UP",
-            "service", "docgen",
-            "version", "1.0.0"
-        );
-
-        // ResponseEntity.ok() = HTTP 200 status code + our data
-        return ResponseEntity.ok(response);
+    // Constructor Injection — Spring provides the PdfGeneratorService
+    public DocumentController(PdfGeneratorService pdfService) {
+        this.pdfService = pdfService;
     }
 
     // ==========================================
-    // ENDPOINT 2: Service Info
-    // URL:    GET http://localhost:8080/api/v1/documents/info
-    // Purpose: Tells callers what this API can do.
-    //          Useful for documentation and debugging.
+    // ENDPOINT 1: Health Check (unchanged)
+    // ==========================================
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, String>> health() {
+        return ResponseEntity.ok(Map.of(
+            "status", "UP",
+            "service", "docgen",
+            "version", "1.0.0"
+        ));
+    }
+
+    // ==========================================
+    // ENDPOINT 2: Service Info (unchanged)
     // ==========================================
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> info() {
@@ -53,10 +49,41 @@ public class DocumentController {
             "description", "Document Output Management API",
             "version", "1.0.0",
             "endpoints", Map.of(
-                "health", "GET  /api/v1/documents/health",
-                "info",   "GET  /api/v1/documents/info",
-                "generate", "POST /api/v1/documents/generate (coming in Step 5)"
+                "health",   "GET  /api/v1/documents/health",
+                "info",     "GET  /api/v1/documents/info",
+                "generate", "POST /api/v1/documents/generate"
             )
         ));
+    }
+
+    // ==========================================
+    // ENDPOINT 3: Generate PDF   *** NEW ***
+    // URL:    POST http://localhost:8080/api/v1/documents/generate
+    // Body:   JSON with templateName, outputFilename, and data
+    // Returns: PDF file as download
+    //
+    // This is the CORE of what Cartago does:
+    //   Template + Data → Document
+    // ==========================================
+    @PostMapping("/generate")
+    public ResponseEntity<byte[]> generateDocument(@RequestBody DocumentRequest request) {
+
+        // Call our service to generate the PDF
+        byte[] pdfBytes = pdfService.generatePdf(
+            request.getTemplateName(),
+            request.getData()
+        );
+
+        // Set HTTP headers so the browser knows this is a PDF download
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData(
+            "attachment",
+            request.getOutputFilename() + ".pdf"
+        );
+        headers.setContentLength(pdfBytes.length);
+
+        // Return PDF bytes with headers
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 }

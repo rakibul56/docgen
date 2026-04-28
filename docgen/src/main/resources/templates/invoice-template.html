@@ -1,0 +1,158 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <!--
+  This is a Thymeleaf template.
+  Everything with th: is a Thymeleaf instruction.
+  th:text="${variable}" = replace this element's text with the variable's value
+
+  When Thymeleaf processes this template, it produces plain HTML
+  that OpenHTMLtoPDF then converts to PDF.
+-->
+  <head>
+    <style>
+      /* These styles will appear in the final PDF */
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 40px;
+        color: #333;
+        font-size: 13px;
+      }
+
+      /* Header with company name */
+      .header {
+        border-bottom: 3px solid #2563eb;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+      }
+      .company-name {
+        font-size: 26px;
+        font-weight: bold;
+        color: #2563eb;
+      }
+      .invoice-label {
+        font-size: 18px;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      /* Two-column layout for bill-to and dates */
+      .details {
+        width: 100%;
+        margin-bottom: 30px;
+      }
+      .details td {
+        vertical-align: top;
+        width: 50%;
+      }
+      .label {
+        font-weight: bold;
+        color: #555;
+        font-size: 11px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+      .value {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      /* Items table */
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .items-table th {
+        background: #2563eb;
+        color: white;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 12px;
+      }
+      .items-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #ddd;
+      }
+      .items-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      /* Total row */
+      .total-row {
+        font-weight: bold;
+        font-size: 15px;
+        background: #e8f0fe !important;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 40px;
+        padding-top: 15px;
+        border-top: 1px solid #ddd;
+        font-size: 11px;
+        color: #888;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <!-- th:text replaces the element's text with the variable value -->
+      <div class="company-name" th:text="${companyName}">Company Name</div>
+      <div class="invoice-label">
+        INVOICE #<span th:text="${invoiceNumber}">0000</span>
+      </div>
+    </div>
+
+    <!-- BILL-TO AND DATES (using table for PDF-compatible layout) -->
+    <table class="details">
+      <tr>
+        <td>
+          <div class="label">Bill To</div>
+          <div class="value" th:text="${customerName}">Customer Name</div>
+          <div class="value" th:text="${customerAddress}">Customer Address</div>
+        </td>
+        <td style="text-align: right">
+          <div class="label">Invoice Date</div>
+          <div class="value" th:text="${invoiceDate}">2025-01-01</div>
+          <div class="label">Due Date</div>
+          <div class="value" th:text="${dueDate}">2025-02-01</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- LINE ITEMS TABLE -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- th:each is a loop — like a for-each in Java.
+                 It repeats this <tr> for every item in the "items" list. -->
+        <tr th:each="item : ${items}">
+          <td th:text="${item.description}">Service</td>
+          <td th:text="${item.quantity}">1</td>
+          <td th:text="'€' + ${item.unitPrice}">€0</td>
+          <td th:text="'€' + ${item.amount}">€0</td>
+        </tr>
+        <!-- Total row -->
+        <tr class="total-row">
+          <td colspan="3" style="text-align: right">TOTAL</td>
+          <td th:text="'€' + ${totalAmount}">€0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Thank you for your business!</p>
+      <p>Payment terms: Net 30 | Bank: IBAN DE89 3704 0044 0532 0130 00</p>
+    </div>
+  </body>
+</html>

@@ -1,30 +1,30 @@
 # ===================================
 # DocGen Service Configuration
 # ===================================
-# Spring Boot reads this file at startup.
-# YAML format: indentation matters! Use spaces, never tabs.
 
-# Server settings (Tomcat)
 server:
-  port:
-    8080 # Tomcat listens on this port
-    # In production, Nginx sits in front on port 80/443
-    # and forwards requests to this port
+  port: 8080
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: always
 
-# Spring settings
 spring:
   application:
-    name: docgen-service # Shows up in logs and monitoring dashboards
+    name: docgen-service
 
-# Actuator settings (health checks + metrics)
-# These endpoints are critical for DevOps:
-# - Kubernetes uses /health for liveness/readiness probes
-# - Prometheus scrapes /metrics for monitoring data
+  # Thymeleaf template engine settings
+  thymeleaf:
+    prefix: classpath:/templates/ # Where to find templates
+    suffix: .html # Template file extension
+    mode: HTML # Parse as HTML
+
+# Actuator settings
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics # Only expose what we need (security!)
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: always # Show detailed health info
+      show-details: always
