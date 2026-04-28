@@ -44,6 +44,9 @@ desktop.ini
 # Claude Code (local personal settings only; shared settings and CLAUDE.md should be committed)
 .claude/settings.local.json
 
+# GitHub agent definitions (local tooling, not project source)
+.github/agents/
+
 # Claude Code skills lock file (internal tool state, not project source)
 skills-lock.json
 
